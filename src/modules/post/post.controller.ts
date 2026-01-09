@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { PostStatus } from "../../../generated/prisma/enums";
 import { paginationSortingHelper } from "../../helpers/paginationSortingHelper";
-import { postServices } from "./post.service";
 import { userRole } from "../../middlewares/auth";
+import { postServices } from "./post.service";
 
 const createPost = async (req: Request, res: Response) => {
   try {
@@ -138,6 +138,47 @@ const updateMyPost = async (req: Request, res: Response) => {
     });
   }
 };
+
+const deletePost = async (req: Request, res: Response) => {
+  try {
+    const isAdmin = req?.user?.role === userRole.ADMIN;
+    const authorId = req?.user?.id;
+    const postId = req.params.postId;
+    const result = await postServices.deletePost(
+      postId as string,
+      authorId as string,
+      isAdmin
+    );
+    res.status(200).json({
+      success: true,
+      message: "Post Deleted Successfully.",
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to Delete post!",
+      error: error.message,
+    });
+  }
+};
+
+const getStats = async (req: Request, res: Response) => {
+  try {
+    const result = await postServices.getStats();
+    res.status(200).json({
+      success: true,
+      message: "Stats Fetched Successfully.",
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetched stats!",
+      error: error.message,
+    });
+  }
+};
 // Export all the function
 export const postController = {
   createPost,
@@ -145,4 +186,6 @@ export const postController = {
   getPostById,
   getMyPost,
   updateMyPost,
+  deletePost,
+  getStats,
 };
