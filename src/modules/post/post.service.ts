@@ -1,6 +1,7 @@
 import { PostStatus } from "../../../generated/prisma/enums";
 import { PostWhereInput } from "../../../generated/prisma/models";
 import { prisma } from "../../lib/prisma";
+import { userRole } from "../../middlewares/auth";
 
 const createPost = async (
   body: { title: string; content: string; tags: string[] },
@@ -174,18 +175,70 @@ const getPostById = async (postId: string) => {
   return result;
 };
 
-const getMyPost = async(authorId : string)=>{
-  return await prisma.post.findMany({
-    where : {
-      authorId : authorId
-    }
-  })
-}
+const getMyPost = async (authorId: string) => {
+  const user = await prisma.user.findUnique({
+    where: {
+      id: authorId,
+      status: "ACTIVE",
+    },
+  });
+  if (!user) {
+    throw new Error("Your account is not active!");
+  }
+  const post = await prisma.post.findMany({
+    where: {
+      authorId: authorId,
+    },
+    include: {
+      comments: true,
+      _count: true,
+    },
+  });
 
+  const total = await prisma.post.count({
+    where: {
+      authorId: authorId,
+    },
+  });
+  return {
+    data: post,
+    total,
+  };
+};
+
+const updateMyPost = async (
+  isAdmin: boolean,
+  authorId: string,
+  data: { content ?: string, isFeatured ?: boolean },
+  postId: string
+) => {
+  const postData = await prisma.post.findUnique({
+    where: {
+      id: postId,
+    },
+  });
+
+  if (!postData) {
+    throw new Error("Not post found!");
+  }
+  if(!isAdmin && (postData?.authorId !== authorId)){
+    throw new Error("You are not the owner of the post")
+  }
+  if(!isAdmin){
+    delete data.isFeatured
+  }
+  return await prisma.post.update({
+    where: {
+      id: postData.id,
+    },
+    data : data
+  });
+};
 // Export all the function
 export const postServices = {
   getAllPost,
   createPost,
   getPostById,
   getMyPost,
+  updateMyPost,
 };

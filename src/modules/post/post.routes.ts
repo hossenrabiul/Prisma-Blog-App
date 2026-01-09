@@ -7,7 +7,8 @@ const route = Router()
 route.get('/', auth(userRole.ADMIN), postController.getAllPost)
 route.get('/my-post', auth(userRole.ADMIN, userRole.USER), postController.getMyPost)
 route.get('/:id', postController.getPostById)
-route.post('/create',auth("ADMIN"), postController.createPost)
+route.patch('/update/:postId',auth(userRole.ADMIN, userRole.USER), postController.updateMyPost)
+route.post('/create',auth(userRole.ADMIN, userRole.USER), postController.createPost)
 
 
 export const postRoute = route;

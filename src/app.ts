@@ -6,6 +6,7 @@ export const app = express()
 app.use(express.json())
 import cors from 'cors'
 import { commentRoute } from './modules/comment/comment.routes';
+import { userRoute } from './modules/user/user.routes';
 app.use(cors({
     origin : process.env.API_URL,
     
@@ -14,6 +15,7 @@ app.use(cors({
 app.all("/api/auth/*splat", toNodeHandler(auth));
 app.use('/post', postRoute)
 app.use('/comment', commentRoute)
+app.use('/user', userRoute)
 
 
 app.get('/', (req, res) => {
