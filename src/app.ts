@@ -7,6 +7,8 @@ app.use(express.json())
 import cors from 'cors'
 import { commentRoute } from './modules/comment/comment.routes';
 import { userRoute } from './modules/user/user.routes';
+import errorHandler from './middlewares/globalErrorHandler';
+import { notFound } from './middlewares/notFound';
 app.use(cors({
     origin : process.env.API_URL,
     
@@ -17,8 +19,10 @@ app.use('/post', postRoute)
 app.use('/comment', commentRoute)
 app.use('/user', userRoute)
 
-
 app.get('/', (req, res) => {
     res.send("Hello world welcome to the prisma project...")
 })
-
+// Not found url
+app.use(notFound)
+// error  handler
+app.use(errorHandler)

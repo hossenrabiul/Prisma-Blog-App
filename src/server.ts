@@ -7,7 +7,7 @@ async function main() {
     console.log("database conntected successfully!!");
     const port = process.env.PORT;
     app.listen(port, () => {
-      console.log("server is running on port 50000");
+      console.log("server is running on port 5000");
     });
   } catch (error: any) {
     console.log(error.message);

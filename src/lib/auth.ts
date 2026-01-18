@@ -124,13 +124,13 @@ export const auth = betterAuth({
   },
 
   //   Google auth
-  baseURL: process.env.BETTER_AUTH_URL,
+  baseURL: process.env.BETTER_AUTH_URL,   // must need
   socialProviders: {
     google: {
-      prompt: "select_account consent",
-      accessType: "offline",
-      clientId: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+      prompt: "select_account consent",  // ask the user each time to select a google account
+      accessType: "offline",  // to get a refresh token each time
+      clientId: process.env.GOOGLE_CLIENT_ID as string,     // must need
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,  // must need
     },
   },
 });

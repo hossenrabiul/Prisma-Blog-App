@@ -1,0 +1,17 @@
+model Comment {
+    id        String        @id @default(uuid())
+    content   String        @db.Text
+    authorId  String //Better-auth
+    postId    String
+    post      Post          @relation(fields: [postId], references: [id], onDelete: Cascade)
+    parentId  String?
+    parent    Comment?      @relation("comments", fields: [parentId], references: [id], onDelete: Cascade) //Self relation
+    replies   Comment[]     @relation("comments")
+    status    CommentStatus @default(APPROVED)
+    createdAt DateTime      @default(now())
+    updatedAt DateTime      @updatedAt
+
+    @@index([postId])
+    @@index([authorId])
+    @@map("comments")
+}
